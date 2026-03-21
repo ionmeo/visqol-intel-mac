@@ -46,6 +46,8 @@ build --define=grpc_no_ares=true
 build --apple_platform_type=macos
 
 ## macOS config
+# Force old cpu value so cpuinfo/XNNPACK config_settings match (Bazel 7 defaults to darwin_x86_64)
+build:macos --cpu=darwin
 # Disable bzlmod to use WORKSPACE zlib with our patch (fixes Xcode 16+ fdopen conflict)
 build:macos --noenable_bzlmod
 # Fix Python extension linking (symbols resolved at runtime when Python loads the module)

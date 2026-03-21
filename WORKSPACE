@@ -103,26 +103,6 @@ git_repository(
     tag = "v1.14.0",
 )
 
-# cpuinfo - imported before TensorFlow to add default case for macOS x86_64 exec config
-http_archive(
-    name = "cpuinfo",
-    sha256 = "18eca9bc8d9c4ce5496d0d2be9f456d55cbbb5f0639a551ce9c8bac2e84d85fe",
-    strip_prefix = "cpuinfo-5e63739504f0f8e18e941bd63b2d6d42536c7d90",
-    urls = ["https://github.com/pytorch/cpuinfo/archive/5e63739504f0f8e18e941bd63b2d6d42536c7d90.tar.gz"],
-    patch_args = ["-p1"],
-    patches = ["//:cpuinfo_default.patch"],
-)
-
-# XNNPACK - imported before TensorFlow to add default case for macOS x86_64 exec config
-http_archive(
-    name = "XNNPACK",
-    sha256 = "7a16ab0d767d9f8819973dbea1dc45e4e08236f89ab702d96f389fdc78c5855c",
-    strip_prefix = "XNNPACK-e8f74a9763aa36559980a0c2f37f587794995622",
-    urls = ["https://github.com/google/XNNPACK/archive/e8f74a9763aa36559980a0c2f37f587794995622.zip"],
-    patch_args = ["-p1"],
-    patches = ["//:xnnpack_default.patch"],
-)
-
 git_repository(
     name = "org_tensorflow",
     remote = "https://github.com/tensorflow/tensorflow.git",
