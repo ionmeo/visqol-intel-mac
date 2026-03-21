@@ -93,6 +93,7 @@ jobs:
         with:
           platform: macos
           architecture: amd64
+          build-options: "--cpu=darwin"
 
   # windows-arm64:
   #   runs-on: windows-11-arm

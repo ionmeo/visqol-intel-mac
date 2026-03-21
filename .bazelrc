@@ -45,13 +45,6 @@ build --define=grpc_no_ares=true
 # Sets the default Apple platform to macOS.
 build --apple_platform_type=macos
 
-## macOS config
-# Disable bzlmod to use WORKSPACE zlib with our patch (fixes Xcode 16+ fdopen conflict)
-build:macos --noenable_bzlmod
-# Fix Python extension linking (symbols resolved at runtime when Python loads the module)
-build:macos --linkopt=-undefined
-build:macos --linkopt=dynamic_lookup
-
 build -c opt
 
 # ViSQOL is overridding the default c++14 settings in tensorflow.
