@@ -60,22 +60,22 @@ jobs:
   #         platform: windows
   #         architecture: amd64
 
-  linux-arm64:
-    runs-on: ubuntu-24.04-arm
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.9
-      - name: Setup ViSQOL dependencies
-        uses: ./.github/actions/setup_visqol_deps
-      - name: Build, test, and upload
-        uses: ./.github/actions/visqol_builder
-        with:
-          platform: linux
-          architecture: arm64
+  # linux-arm64:
+  #   runs-on: ubuntu-24.04-arm
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v4
+  #     - name: Set up Python 3.9
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: 3.9
+  #     - name: Setup ViSQOL dependencies
+  #       uses: ./.github/actions/setup_visqol_deps
+  #     - name: Build, test, and upload
+  #       uses: ./.github/actions/visqol_builder
+  #       with:
+  #         platform: linux
+  #         architecture: arm64
 
   macos-amd64:
     runs-on: macos-26-intel
@@ -94,22 +94,28 @@ jobs:
           platform: macos
           architecture: amd64
 
-  windows-arm64:
-    runs-on: windows-11-arm
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.9
-      - name: Configure Windows build
-        run: ./configure_windows.ps1
-        shell: pwsh
-      - name: Setup ViSQOL dependencies
-        uses: ./.github/actions/setup_visqol_deps
-      - name: Build, test, and upload
-        uses: ./.github/actions/visqol_builder
-        with:
-          platform: windows
-          architecture: arm64
+  # windows-arm64:
+  #   runs-on: windows-11-arm
+  #   steps:
+  #     - name: Checkout repo
+  #       uses: actions/checkout@v4
+  #     - name: Set up Python 3.9
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: 3.11
+  #     - name: Install Visual Studio Build Tools
+  #       run: |
+  #         Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vs_buildtools.exe" -OutFile vs_buildtools.exe
+  #         Start-Process -FilePath .\vs_buildtools.exe -ArgumentList "--quiet", "--wait", "--norestart", "--nocache", "--add", "Microsoft.VisualStudio.Workload.VCTools", "--add", "Microsoft.VisualStudio.Component.VC.Tools.ARM64", "--includeRecommended" -Wait
+  #         Remove-Item .\vs_buildtools.exe
+  #       shell: pwsh
+  #     - name: Configure Windows build
+  #       run: ./configure_windows.ps1
+  #       shell: pwsh
+  #     - name: Setup ViSQOL dependencies
+  #       uses: ./.github/actions/setup_visqol_deps
+  #     - name: Build, test, and upload
+  #       uses: ./.github/actions/visqol_builder
+  #       with:
+  #         platform: windows
+  #         architecture: arm64

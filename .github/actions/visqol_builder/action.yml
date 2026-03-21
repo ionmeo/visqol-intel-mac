@@ -9,7 +9,7 @@ inputs:
   architecture:
     description: target architecture to build for
     required: true
-    build-options:
+  build-options:
       description: bazel build command options
       required: false
       default: ""
