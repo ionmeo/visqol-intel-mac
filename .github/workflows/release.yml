@@ -1,0 +1,59 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag'
+        required: true
+      overwrite:
+        description: 'Overwrite existing release'
+        type: boolean
+        default: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Check existing release
+        if: inputs.overwrite == false
+        run: |
+          if gh release view ${{ inputs.tag }} --repo ${{ github.repository }}; then
+            echo "::error::Release ${{ inputs.tag }} already exists. Use overwrite=true to replace."
+            exit 1
+          fi
+
+      - name: Delete existing release
+        if: inputs.overwrite == true
+        run: |
+          gh release delete ${{ inputs.tag }} --repo ${{ github.repository }} --yes || true
+          git push --delete origin ${{ inputs.tag }} || true
+
+      - name: Get latest build run
+        id: get_run
+        run: |
+          RUN_ID=$(gh run list --repo ${{ github.repository }} --workflow=ci.yml --status=success --limit=1 --json databaseId -q '.[0].databaseId')
+          echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ steps.get_run.outputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: artifacts
+
+      - name: Create zips
+        run: |
+          cd artifacts
+          for dir in */; do
+            zip -r "../${dir%/}.zip" "$dir"
+          done
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag }}
+          files: "*.zip"
+          body: ""
