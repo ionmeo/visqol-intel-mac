@@ -1,0 +1,1 @@
+# visqol-intel-mac
