@@ -6,8 +6,3 @@
 /visqol_lib_py
 .vscode
 .bazelrc.user
-MODULE.bazel
-MODULE.bazel.lock
-tensorflow-2.11.0/
-XNNPACK-*/
-cpuinfo-*/

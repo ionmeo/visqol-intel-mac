@@ -4,31 +4,6 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_repository")
 
-# zlib - must be imported BEFORE TensorFlow to fix macOS Xcode 16+ fdopen conflict
-http_archive(
-    name = "zlib",
-    build_file_content = """
-cc_library(
-    name = "zlib",
-    srcs = glob(["*.c"]),
-    hdrs = glob(["*.h"]),
-    includes = ["."],
-    copts = select({
-        "@bazel_tools//src/conditions:darwin": ["-include", "unistd.h"],
-        "//conditions:default": [],
-    }),
-    visibility = ["//visibility:public"],
-)
-""",
-    sha256 = "ff0ba4c292013dbc27530b3a81e1f9a813cd39de01ca5e0f8bf355702efa593e",
-    strip_prefix = "zlib-1.3",
-    urls = [
-        "https://github.com/madler/zlib/releases/download/v1.3/zlib-1.3.tar.gz",
-    ],
-    patch_args = ["-p1"],
-    patches = ["//:zlib_fdopen.patch"],
-)
-
 # The order of importing the archives is very important here.  In particular, tensorflow's
 # workspace import function imports a version of pybind11 and protobuf that are older and
 # not compatible with current pybind11_protobuf/abseil.  Since the first import is the only
@@ -95,12 +70,24 @@ http_archive(
     urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.19.1.tar.gz"],
 )
 
-# GoogleTest framework.
-# Imported before TensorFlow to prevent TF from importing a newer incompatible version.
+# GoogleTest/GoogleMock framework.
+# GoogleTest v1.11.0+ fixes @bazel_tools//platforms:windows constraint error
+# by using @platforms//os:windows instead. It is imported before TensorFlow
+# to prevent TF from using the older incompatible version.
 git_repository(
     name = "com_google_googletest",
     remote = "https://github.com/google/googletest.git",
-    tag = "v1.14.0",
+    tag = "release-1.11.0",
+)
+
+# Import zlib 1.3.2 before TensorFlow to override TF's bundled zlib 1.2.13 
+# which defines a fdopen macro that conflicts with newer macOS SDK headers.
+# zlib 1.3.2 is also the first release to include BUILD.bazel file, making
+# integration with VISQOL easier.
+git_repository(
+    name = "zlib",
+    remote = "https://github.com/madler/zlib.git",
+    tag = "v1.3.2",
 )
 
 git_repository(
@@ -110,7 +97,7 @@ git_repository(
     commit = "d5b57ca93e506df258271ea00fc29cf98383a374",
     shallow_since = "1668561432 -0800",
     patch_args = ["-p1"],
-    patches = ["//:tensorflow_cstdint.patch"],
+    patches = ["//:patches/tensorflow_cstdint.patch"],
 )
 
 # Import all of TensorFlow Serving's external dependencies.

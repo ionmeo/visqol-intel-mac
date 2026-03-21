@@ -1,89 +1,78 @@
 name: build
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: 'Label for this run'
+        required: false
+        default: ''
+      linux-amd64:
+        type: boolean
+        default: true
+      linux-arm64:
+        type: boolean
+        default: true
+      macos-amd64:
+        type: boolean
+        default: true
+      macos-arm64:
+        type: boolean
+        default: true
+      windows-amd64:
+        type: boolean
+        default: true
+      windows-arm64:
+        type: boolean
+        default: true
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+run-name: "${{ inputs.note || 'build' }}"
 
 jobs:
-  # linux-amd64:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v4
-  #     - name: Set up Python 3.9
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.9
-  #     - name: Setup ViSQOL dependencies
-  #       uses: ./.github/actions/setup_visqol_deps
-  #     - name: Build, test, and upload
-  #       uses: ./.github/actions/visqol_builder
-  #       with:
-  #         platform: linux
-  #         architecture: amd64
+  linux-amd64:
+    if: ${{ inputs.linux-amd64 }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Setup ViSQOL dependencies
+        uses: ./.github/actions/setup_visqol_deps
+      - name: Build, test, and upload
+        uses: ./.github/actions/visqol_builder
+        with:
+          platform: linux
+          architecture: amd64
 
-  # macos-arm64:
-  #   runs-on: macos-latest
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v4
-  #     - name: Set up Python 3.9
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.9
-  #     - name: Setup ViSQOL dependencies
-  #       uses: ./.github/actions/setup_visqol_deps
-  #     - name: Build, test, and upload
-  #       uses: ./.github/actions/visqol_builder
-  #       with:
-  #         platform: macos
-  #         architecture: arm64
-
-  # windows-amd64:
-  #   runs-on: windows-latest
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v4
-  #     - name: Set up Python 3.9
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.9
-  #     - name: Configure Windows build
-  #       run: ./configure_windows.ps1
-  #       shell: pwsh
-  #     - name: Setup ViSQOL dependencies
-  #       uses: ./.github/actions/setup_visqol_deps
-  #     - name: Build, test, and upload
-  #       uses: ./.github/actions/visqol_builder
-  #       with:
-  #         platform: windows
-  #         architecture: amd64
-
-  # linux-arm64:
-  #   runs-on: ubuntu-24.04-arm
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v4
-  #     - name: Set up Python 3.9
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.9
-  #     - name: Setup ViSQOL dependencies
-  #       uses: ./.github/actions/setup_visqol_deps
-  #     - name: Build, test, and upload
-  #       uses: ./.github/actions/visqol_builder
-  #       with:
-  #         platform: linux
-  #         architecture: arm64
+  linux-arm64:
+    if: ${{ inputs.linux-arm64 }}
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Setup ViSQOL dependencies
+        uses: ./.github/actions/setup_visqol_deps
+      - name: Build, test, and upload
+        uses: ./.github/actions/visqol_builder
+        with:
+          platform: linux
+          architecture: arm64
 
   macos-amd64:
+    if: ${{ inputs.macos-amd64 }}
     runs-on: macos-26-intel
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
       - name: Set up Python 3.9
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Setup ViSQOL dependencies
@@ -93,30 +82,63 @@ jobs:
         with:
           platform: macos
           architecture: amd64
-          build-options: "--cpu=darwin"
 
-  # windows-arm64:
-  #   runs-on: windows-11-arm
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v4
-  #     - name: Set up Python 3.9
-  #       uses: actions/setup-python@v5
-  #       with:
-  #         python-version: 3.11
-  #     - name: Install Visual Studio Build Tools
-  #       run: |
-  #         Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vs_buildtools.exe" -OutFile vs_buildtools.exe
-  #         Start-Process -FilePath .\vs_buildtools.exe -ArgumentList "--quiet", "--wait", "--norestart", "--nocache", "--add", "Microsoft.VisualStudio.Workload.VCTools", "--add", "Microsoft.VisualStudio.Component.VC.Tools.ARM64", "--includeRecommended" -Wait
-  #         Remove-Item .\vs_buildtools.exe
-  #       shell: pwsh
-  #     - name: Configure Windows build
-  #       run: ./configure_windows.ps1
-  #       shell: pwsh
-  #     - name: Setup ViSQOL dependencies
-  #       uses: ./.github/actions/setup_visqol_deps
-  #     - name: Build, test, and upload
-  #       uses: ./.github/actions/visqol_builder
-  #       with:
-  #         platform: windows
-  #         architecture: arm64
+  macos-arm64:
+    if: ${{ inputs.macos-arm64 }}
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Setup ViSQOL dependencies
+        uses: ./.github/actions/setup_visqol_deps
+      - name: Build, test, and upload
+        uses: ./.github/actions/visqol_builder
+        with:
+          platform: macos
+          architecture: arm64
+
+  windows-amd64:
+    if: ${{ inputs.windows-amd64 }}
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Configure Windows build
+        run: ./configure_windows.ps1
+        shell: pwsh
+      - name: Setup ViSQOL dependencies
+        uses: ./.github/actions/setup_visqol_deps
+      - name: Build, test, and upload
+        uses: ./.github/actions/visqol_builder
+        with:
+          platform: windows
+          architecture: amd64
+
+  windows-arm64:
+    if: ${{ inputs.windows-arm64 }}
+    runs-on: windows-11-arm
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Configure Windows build
+        run: ./configure_windows.ps1
+        shell: pwsh
+      - name: Setup ViSQOL dependencies
+        uses: ./.github/actions/setup_visqol_deps
+      - name: Build, test, and upload
+        uses: ./.github/actions/visqol_builder
+        with:
+          platform: windows
+          architecture: arm64

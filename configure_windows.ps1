@@ -28,7 +28,7 @@ function Find-Python {
     return $null
 }
 
-Write-Host "Detecting Windows build tools..." -ForegroundColor Cyan
+Write-Host "Looking for bash and python..." -ForegroundColor Cyan
 
 $bashPath = Find-Bash
 $pythonPath = Find-Python
@@ -61,7 +61,7 @@ build:windows --action_env=BAZEL_SH="$bashPath"
 build:windows --repo_env=PYTHON_BIN_PATH="$pythonPath"
 
 # Fixes "<3>WSL (11) ERROR: CreateProcessCommon:559: execvpe(/bin/bash) failed: No such file or directory"
-# Error caused by WSL bash (C:\Windows\system32\bash.exe) being invoked instead of Git bash
+# Error caused by WSL bash (C:\Windows\system32\bash.exe) being used instead of Git bash
 build:windows --shell_executable="$bashPath"
 "@
 
@@ -70,4 +70,4 @@ $bazelrcPath = Join-Path $scriptDir ".bazelrc.user"
 
 Set-Content -Path $bazelrcPath -Value $bazelrcContent -Encoding UTF8
 
-Write-Host "`nGenerated $bazelrcPath" -ForegroundColor Green
+Write-Host "`nCreated $bazelrcPath" -ForegroundColor Green
