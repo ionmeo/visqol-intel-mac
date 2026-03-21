@@ -82,7 +82,7 @@ jobs:
         with:
           platform: macos
           architecture: amd64
-          build-options: "--cpu=darwin"
+          build-options: "--cpu=darwin_x86_64"
 
   macos-arm64:
     if: ${{ inputs.macos-arm64 }}
