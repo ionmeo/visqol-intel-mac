@@ -45,9 +45,6 @@ build --define=grpc_no_ares=true
 # Sets the default Apple platform to macOS.
 build --apple_platform_type=macos
 
-build:macos --linkopt=-undefined
-build:macos --linkopt=dynamic_lookup
-
 build -c opt
 
 # ViSQOL is overridding the default c++14 settings in tensorflow.
