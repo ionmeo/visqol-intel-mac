@@ -131,13 +131,11 @@ load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
 grpc_deps()
 
 # There are cc_libary rule errors without @rules_cc.
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
-http_archive(
+git_repository(
     name = "rules_cc",
-    sha256 = "0d3b4f984c4c2e1acfd1378e0148d35caf2ef1d9eb95b688f8e19ce0c41bdf5b",
-    strip_prefix = "rules_cc-0.1.4",
-    url = "https://github.com/bazelbuild/rules_cc/releases/download/0.1.4/rules_cc-0.1.4.tar.gz",
+    commit = "40548a2974f1aea06215272d9c2b47a14a24e556",
+    remote = "https://github.com/bazelbuild/rules_cc.git",
+    shallow_since = "1612528209 -0800"
 )
 
 # End TF WORKSPACE Loading
