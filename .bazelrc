@@ -46,6 +46,7 @@ build --define=grpc_no_ares=true
 build --apple_platform_type=macos
 
 build:macos --noenable_bzlmod
+build:macos --linkopt=-undefined
 build:macos --linkopt=dynamic_lookup
 
 build -c opt
